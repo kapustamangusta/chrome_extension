@@ -1,7 +1,13 @@
+import 'package:extension_chrome/api/api.dart';
 import 'package:extension_chrome/features/chat/chat.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
+
+  final client = ApiClient.create(apiUrl: dotenv.env['API_URL']);
   runApp(const MyApp());
 }
 
