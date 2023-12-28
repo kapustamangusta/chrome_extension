@@ -1,10 +1,10 @@
-import 'package:extension_chrome/base_form_field.dart';
+import 'package:extension_chrome/UI/base_form_field.dart';
 import 'package:flutter/material.dart';
 
 
 class ChatFormField extends StatefulWidget {
   final TextEditingController controller;
-  final Function() onClick;
+  final Function()? onClick;
   const ChatFormField(
       {super.key, required this.controller, required this.onClick});
 

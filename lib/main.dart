@@ -1,4 +1,4 @@
-import 'package:extension_chrome/chrome_popup.dart';
+import 'package:extension_chrome/features/chat/chat.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -14,12 +14,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-         primaryColor: const Color(0xFF00093C),
+        primaryColor: const Color(0xFF00093C),
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: ChromePopup(),
+      home: const ChatPage(),
     );
   }
 }
-
