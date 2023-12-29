@@ -1,8 +1,8 @@
-import 'package:dio/dio.dart';
 import 'package:extension_chrome/UI/ui.dart';
+import 'package:extension_chrome/features/chat/bloc/chat_bloc.dart';
+import 'package:extension_chrome/features/chat/chat.dart';
 import 'package:flutter/material.dart';
-
-import '../widgets/chat.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -27,43 +27,73 @@ class _ChatPageState extends State<ChatPage> {
         padding: const EdgeInsets.symmetric(vertical: 16),
         //height: 700,
         width: 600,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Expanded(
-              child: Chat(chat: chat),
-            ),
-            loading
-                ? const CircularProgressIndicator()
-                : Align(
+        child: BlocBuilder<ChatBloc, ChatState>(
+          builder: (context, state) {
+            if (state is ChatLoading) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Expanded(child: Chat(chat: chat)),
+                  const CircularProgressIndicator(),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    child: ChatFormField(
+                      controller: _chatController,
+                      onClick: null,
+                      onFieldSubmitted: null,
+                      suffixIcon: Icon(
+                        Icons.arrow_upward_sharp,
+                        color: theme.primaryColor,
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }
+            if (state is ChatLoaded) {
+              if (chat.length % 2 == 1) chat.removeLast();
+              chat.add(state.answer);
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Expanded(child: Chat(chat: chat)),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    child: ChatFormField(
+                      controller: _chatController,
+                      suffixIcon: Icon(
+                        Icons.stop,
+                        color: theme.primaryColor,
+                      ),
+                      onClick: () {
+                        BlocProvider.of<ChatBloc>(context)
+                            .add(ChatGenearate(text: "", stop: true));
+                        _chatController.clear();
+                      },
+                    ),
+                  ),
+                ],
+              );
+            }
+            if (state is ChatFailure) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Expanded(child: Chat(chat: chat)),
+                  Text(
+                    state.error.toString(),
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                  Align(
                     alignment: Alignment.centerRight,
                     child: ChatButton(
-                      onPressed: () async {
-                        setState(() {
-                          loading = true;
-                          chat.add('У кого сегодня ДР?');
-                        });
-
-                        var dio = Dio();
-
-                        final responce = await dio.get(
-                          'http://localhost:5253/birthdays',
-                        );
-                        setState(() {
-                          loading = false;
-                        });
-
-                        String mes = responce.data.toString();
-                        chat.add("");
-
-                        for (int i = 0; i <= mes.length; i++) {
-                          await Future.delayed(
-                              const Duration(milliseconds: 50));
-                          setState(() {
-                            chat.removeLast();
-                            chat.add(mes.substring(0, i));
-                          });
-                        }
+                      onPressed: () {
+                        chat.add("У кого сеодня ДР?");
+                        BlocProvider.of<ChatBloc>(context)
+                            .add(SearchBirthdays());
                       },
                       child: Text(
                         "Дни рождения",
@@ -72,44 +102,76 @@ class _ChatPageState extends State<ChatPage> {
                       ),
                     ),
                   ),
-            Container(
-              padding: const EdgeInsets.all(8),
-              child: ChatFormField(
-                controller: _chatController,
-                onClick: loading
-                    ? null
-                    : () async {
-                        setState(() {
-                          loading = true;
-                          chat.add(_chatController.text);
-                        });
-
-                        var dio = Dio();
-
-                        final responce = await dio.post(
-                          'http://localhost:5253/send-message?question=${_chatController.text== ''  ? "a" : _chatController.text}',
-                        );
-                        setState(() {
-                          _chatController.clear();
-                        });
-                        String mes = responce.data.toString();
-                        chat.add("");
-
-                        for (int i = 0; i <= mes.length; i++) {
-                          await Future.delayed(
-                              const Duration(milliseconds: 50));
-                          setState(() {
-                            chat.removeLast();
-                            chat.add(mes.substring(0, i));
-                          });
-                        }
-                        setState(() {
-                          loading = false;
-                        });
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    child: ChatFormField(
+                      controller: _chatController,
+                      suffixIcon: Icon(
+                        Icons.arrow_upward_sharp,
+                        color: theme.primaryColor,
+                      ),
+                      onClick: () {
+                        chat.add(_chatController.text);
+                        BlocProvider.of<ChatBloc>(context)
+                            .add(SendMessage(message: _chatController.text));
+                        _chatController.clear();
                       },
-              ),
-            ),
-          ],
+                      onFieldSubmitted: (value) {
+                        chat.add(_chatController.text);
+                        BlocProvider.of<ChatBloc>(context)
+                            .add(SendMessage(message: _chatController.text));
+                        _chatController.clear();
+                      },
+                    ),
+                  ),
+                ],
+              );
+            }
+
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Expanded(child: Chat(chat: chat)),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: ChatButton(
+                    onPressed: () {
+                      chat.add("У кого сеодня ДР?");
+                      BlocProvider.of<ChatBloc>(context).add(SearchBirthdays());
+                    },
+                    child: Text(
+                      "Дни рождения",
+                      style: TextStyle(
+                          color: theme.primaryTextTheme.bodyMedium!.color),
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  child: ChatFormField(
+                    controller: _chatController,
+                    suffixIcon: Icon(
+                      Icons.arrow_upward_sharp,
+                      color: theme.primaryColor,
+                    ),
+                    onClick: () {
+                      chat.add(_chatController.text);
+                      BlocProvider.of<ChatBloc>(context)
+                          .add(SendMessage(message: _chatController.text));
+                      _chatController.clear();
+                    },
+                    onFieldSubmitted: (value) {
+                      chat.add(_chatController.text);
+                      BlocProvider.of<ChatBloc>(context)
+                          .add(SendMessage(message: _chatController.text));
+                      _chatController.clear();
+                    },
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );

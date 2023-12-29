@@ -11,6 +11,7 @@ class BaseFormField extends StatefulWidget {
   final Widget? suffixIcon;
   final String? Function(String)? validator;
   final Function(String)? onChanged;
+  final Function(String)? onFieldSubmitted;
   const BaseFormField(
       {super.key,
       required this.controller,
@@ -22,7 +23,7 @@ class BaseFormField extends StatefulWidget {
       this.onChanged,
       this.icon,
       this.confirmButton,
-      this.suffixIcon});
+      this.suffixIcon, this.onFieldSubmitted});
 
   @override
   State<BaseFormField> createState() => _BaseFormFieldState();
@@ -35,6 +36,7 @@ class _BaseFormFieldState extends State<BaseFormField> {
     isHiding = widget.hideText ? isHiding : false;
     var theme = Theme.of(context);
     return TextFormField(
+      onFieldSubmitted: widget.onFieldSubmitted,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       controller: widget.controller,
       obscureText: isHiding,

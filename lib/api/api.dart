@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 import 'package:retrofit/retrofit.dart';
 
 part 'api.g.dart';
@@ -19,7 +19,7 @@ abstract class ApiClient {
   @GET('/birthdays')
   Future<String> getBirhdays();
 
-  @PUT('/send-message')
+  @POST('/send-message')
   Future<String> getAnswer(@Query("question") String question);
 }
 

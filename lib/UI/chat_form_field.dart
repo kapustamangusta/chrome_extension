@@ -5,34 +5,28 @@ import 'package:flutter/material.dart';
 class ChatFormField extends StatefulWidget {
   final TextEditingController controller;
   final Function()? onClick;
+  final Function(String)? onFieldSubmitted;
+  final Widget? suffixIcon;
   const ChatFormField(
-      {super.key, required this.controller, required this.onClick});
+      {super.key, required this.controller, required this.onClick, this.suffixIcon, this.onFieldSubmitted});
 
   @override
   State<ChatFormField> createState() => _ChatFormFieldState();
 }
 
 class _ChatFormFieldState extends State<ChatFormField> {
-  bool _isHovered = false;
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context);
+   
     return BaseFormField(
+      onFieldSubmitted: widget.onFieldSubmitted,
       controller: widget.controller,
       suffixIcon: MouseRegion(
-        onEnter: (event) => setState(() {
-          _isHovered = true;
-        }),
-        onExit: (event) => setState(() {
-          _isHovered = false;
-        }),
+     
         cursor: SystemMouseCursors.click,
         child: GestureDetector(
           onTap: widget.onClick,
-          child: Icon(
-            Icons.arrow_upward_rounded,
-            color: _isHovered ? theme.primaryColor : theme.hintColor,
-          ),
+          child: widget.suffixIcon,
         ),
       ),
     );
