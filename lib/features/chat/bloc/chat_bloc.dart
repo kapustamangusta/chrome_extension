@@ -42,6 +42,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   Future<void> _onChatGenerate (
       ChatGenearate event, Emitter<ChatState> emit) async {
+        //TODO: сделать проверкку на остановку
      for (int i = 0; i <= event.text.length; i++) {
         await Future.delayed(const Duration(milliseconds: 25));
         emit(ChatLoaded(answer: event.text.substring(0, i)));
