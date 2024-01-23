@@ -16,8 +16,8 @@ class _ChatButtonState extends State<ChatButton> {
       padding: const EdgeInsets.all(8),
       child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-              backgroundColor: theme.primaryColor,
-              side: const BorderSide(width: 2, color: Colors.white)),
+              backgroundColor: Colors.grey[200],
+              side:  BorderSide(width: 2, color: theme.primaryColor)),
           onPressed: () async {
             if (widget.onPressed != null) {
               widget.onPressed!();

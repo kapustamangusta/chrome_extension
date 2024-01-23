@@ -29,12 +29,26 @@ function init(){
     // Добавляем кнопку на страницу
     document.body.appendChild(button);
 
-    //document.body.style.overflow="hidden";
 
     // Добавляем обработчик события нажатия на кнопку
     button.addEventListener('click', function() {
-        chrome.runtime.sendMessage({todo: "showSideBar"});
+        chrome.runtime.sendMessage({ action: 'openSidePanel' });
     });
+
+    chrome.runtime.connect({
+        name: 'mySidepanel'
+      });
 }
+
+chrome.runtime.onMessage.addListener((response) => {  
+    if (response.success) {
+      console.log("Success: Side panel opened");
+    } else if (response.errorMessage) {
+        console.log("Error:", response.errorMessage);
+    } else {
+        console.log("Unrecognized message format:", response);
+    }
+  });
+
 
 init();

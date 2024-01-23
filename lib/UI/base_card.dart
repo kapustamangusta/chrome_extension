@@ -12,7 +12,9 @@ class BaseCard extends StatelessWidget {
     var theme = Theme.of(context);
     return Container(
       padding: padding,
+      
       decoration: BoxDecoration(
+        color: Colors.grey[200],
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: theme.primaryColor,

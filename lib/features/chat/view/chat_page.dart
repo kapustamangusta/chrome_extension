@@ -4,6 +4,8 @@ import 'package:extension_chrome/features/chat/chat.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../api/models/models.dart';
+
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
 
@@ -14,10 +16,16 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   final TextEditingController _chatController = TextEditingController();
 
-  List<String> chat = [
-    'Привет! Если у тебя возникли вопросы о наших курсах или ты хочешь узнать больше о том, как зарегистрироваться, я готов помочь.'
-  ];
+  String? idChat;
+  String uidClient = "1";
+  List<ChatInfo> chatsInfo = [];
   bool loading = false;
+
+  @override
+  void initState() {
+    BlocProvider.of<ChatBloc>(context).add(LoadChatsInfo(uidClient: uidClient));
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,14 +35,27 @@ class _ChatPageState extends State<ChatPage> {
         padding: const EdgeInsets.symmetric(vertical: 16),
         //height: 700,
         width: 600,
-        child: BlocBuilder<ChatBloc, ChatState>(
+        child: BlocConsumer<ChatBloc, ChatState>(
+          listener: (context, state) {
+            if (state is ChatGettedInfo) {
+              chatsInfo = state.chatsInfo;
+            }
+          },
           builder: (context, state) {
+            var info = chatsInfo
+                .where((element) => element.chatNumber == idChat)
+                .firstOrNull;
+            var chat = info != null ? info.messages! : <Messages>[];
             if (state is ChatLoading) {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  Expanded(child: Chat(chat: chat)),
+                  Expanded(
+                    child: Chat(
+                      chat: chat,
+                    ),
+                  ),
                   const CircularProgressIndicator(),
                   Container(
                     padding: const EdgeInsets.all(8),
@@ -53,12 +74,31 @@ class _ChatPageState extends State<ChatPage> {
             }
             if (state is ChatLoaded) {
               if (chat.length % 2 == 1) chat.removeLast();
-              chat.add(state.answer);
+              chat.add(Messages(role: "system", content: state.answer));
               return Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  Expanded(child: Chat(chat: chat)),
+                  Container(
+                    padding: const EdgeInsets.only(left: 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ChatsDropdownButton(
+                          items: chatsInfo,
+                          selectedValue: info,
+                          onSelected: null,
+                          onCreateChat: null,
+                          onDeleteChat: null,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Chat(
+                      chat: info != null ? info.messages! : [],
+                    ),
+                  ),
                   Container(
                     padding: const EdgeInsets.all(8),
                     child: ChatFormField(
@@ -69,7 +109,7 @@ class _ChatPageState extends State<ChatPage> {
                       ),
                       onClick: () {
                         BlocProvider.of<ChatBloc>(context)
-                            .add(ChatGenearate(text: "", stop: true));
+                            .add(const ChatGenearate(text: "", stop: true));
                         _chatController.clear();
                       },
                     ),
@@ -82,7 +122,43 @@ class _ChatPageState extends State<ChatPage> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  Expanded(child: Chat(chat: chat)),
+                  Container(
+                    padding: const EdgeInsets.only(left: 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ChatsDropdownButton(
+                          items: chatsInfo,
+                          selectedValue: info,
+                          onSelected: (chatInfo) {
+                            idChat = chatInfo.chatNumber;
+
+                            BlocProvider.of<ChatBloc>(context)
+                                .add(ChangeChat());
+                          },
+                          onCreateChat: () {
+                            idChat = null;
+                            BlocProvider.of<ChatBloc>(context)
+                                .add(ChangeChat());
+                          },
+                          onDeleteChat: (chatInfo) {
+                            if (chatInfo.chatNumber != idChat) {
+                              BlocProvider.of<ChatBloc>(context).add(
+                                DeleteChat(
+                                    uidClient: uidClient,
+                                    idChat: chatInfo.chatNumber!),
+                              );
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Chat(
+                      chat: info != null ? info.messages! : [],
+                    ),
+                  ),
                   Text(
                     state.error.toString(),
                     style: const TextStyle(color: Colors.red),
@@ -91,14 +167,13 @@ class _ChatPageState extends State<ChatPage> {
                     alignment: Alignment.centerRight,
                     child: ChatButton(
                       onPressed: () {
-                        chat.add("У кого сеодня ДР?");
+                        //chat.add("У кого сеодня ДР?");
                         BlocProvider.of<ChatBloc>(context)
                             .add(SearchBirthdays());
                       },
                       child: Text(
                         "Дни рождения",
-                        style: TextStyle(
-                            color: theme.primaryTextTheme.bodyMedium!.color),
+                        style: TextStyle(color: theme.primaryColor),
                       ),
                     ),
                   ),
@@ -111,15 +186,25 @@ class _ChatPageState extends State<ChatPage> {
                         color: theme.primaryColor,
                       ),
                       onClick: () {
-                        chat.add(_chatController.text);
-                        BlocProvider.of<ChatBloc>(context)
-                            .add(SendMessage(message: _chatController.text));
+                        chat.add(Messages(
+                            role: "user", content: _chatController.text));
+                        BlocProvider.of<ChatBloc>(context).add(SendMessage(
+                            idChat: idChat,
+                            chat: chat,
+                            uidClient: uidClient,
+                            message: _chatController.text));
+                        if (chat.length == 1) idChat = _chatController.text;
                         _chatController.clear();
                       },
                       onFieldSubmitted: (value) {
-                        chat.add(_chatController.text);
-                        BlocProvider.of<ChatBloc>(context)
-                            .add(SendMessage(message: _chatController.text));
+                        chat.add(Messages(
+                            role: "user", content: _chatController.text));
+                        BlocProvider.of<ChatBloc>(context).add(SendMessage(
+                            idChat: idChat,
+                            chat: chat,
+                            uidClient: uidClient,
+                            message: _chatController.text));
+                        if (chat.length == 1) idChat = _chatController.text;
                         _chatController.clear();
                       },
                     ),
@@ -127,50 +212,98 @@ class _ChatPageState extends State<ChatPage> {
                 ],
               );
             }
+            if (state is ChatInitial) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.only(left: 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ChatsDropdownButton(
+                          items: chatsInfo,
+                          selectedValue: info,
+                          onSelected: (chatInfo) {
+                            idChat = chatInfo.chatNumber;
 
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Expanded(child: Chat(chat: chat)),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: ChatButton(
-                    onPressed: () {
-                      chat.add("У кого сеодня ДР?");
-                      BlocProvider.of<ChatBloc>(context).add(SearchBirthdays());
-                    },
-                    child: Text(
-                      "Дни рождения",
-                      style: TextStyle(
-                          color: theme.primaryTextTheme.bodyMedium!.color),
+                            BlocProvider.of<ChatBloc>(context)
+                                .add(ChangeChat());
+                          },
+                          onCreateChat: () {
+                            idChat = null;
+                            BlocProvider.of<ChatBloc>(context)
+                                .add(ChangeChat());
+                          },
+                          onDeleteChat: (chatInfo) {
+                            if (chatInfo.chatNumber != idChat) {
+                              BlocProvider.of<ChatBloc>(context).add(
+                                DeleteChat(
+                                    uidClient: uidClient,
+                                    idChat: chatInfo.chatNumber!),
+                              );
+                            }
+                          },
+                        ),
+                      ],
                     ),
                   ),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  child: ChatFormField(
-                    controller: _chatController,
-                    suffixIcon: Icon(
-                      Icons.arrow_upward_sharp,
-                      color: theme.primaryColor,
+                  Expanded(
+                    child: Chat(
+                      chat: info != null ? info.messages! : [],
                     ),
-                    onClick: () {
-                      chat.add(_chatController.text);
-                      BlocProvider.of<ChatBloc>(context)
-                          .add(SendMessage(message: _chatController.text));
-                      _chatController.clear();
-                    },
-                    onFieldSubmitted: (value) {
-                      chat.add(_chatController.text);
-                      BlocProvider.of<ChatBloc>(context)
-                          .add(SendMessage(message: _chatController.text));
-                      _chatController.clear();
-                    },
                   ),
-                ),
-              ],
-            );
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: ChatButton(
+                      onPressed: () {
+                        //chat.add("У кого сеодня ДР?");
+                        BlocProvider.of<ChatBloc>(context)
+                            .add(SearchBirthdays());
+                      },
+                      child: Text(
+                        "Дни рождения",
+                        style: TextStyle(color: theme.primaryColor),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    child: ChatFormField(
+                      controller: _chatController,
+                      suffixIcon: Icon(
+                        Icons.arrow_upward_sharp,
+                        color: theme.primaryColor,
+                      ),
+                      onClick: () {
+                        chat.add(Messages(
+                            role: "user", content: _chatController.text));
+                        BlocProvider.of<ChatBloc>(context).add(SendMessage(
+                            idChat: idChat,
+                            chat: chat,
+                            uidClient: uidClient,
+                            message: _chatController.text));
+                        if (chat.length == 1) idChat = _chatController.text;
+                        _chatController.clear();
+                      },
+                      onFieldSubmitted: (value) {
+                        chat.add(Messages(
+                            role: "user", content: _chatController.text));
+                        BlocProvider.of<ChatBloc>(context).add(SendMessage(
+                            idChat: idChat,
+                            chat: chat,
+                            uidClient: uidClient,
+                            message: _chatController.text));
+                        if (chat.length == 1) idChat = _chatController.text;
+                        _chatController.clear();
+                      },
+                    ),
+                  ),
+                ],
+              );
+            }
+            return const CircularProgressIndicator();
           },
         ),
       ),

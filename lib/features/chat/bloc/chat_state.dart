@@ -7,7 +7,16 @@ abstract class ChatState {
   // List<Object> get props => [];
 }
 
-class ChatInitial extends ChatState {}
+class ChatInitial extends ChatState {
+  
+}
+
+class ChatGettedInfo extends ChatState {
+  final List<ChatInfo> chatsInfo;
+
+  ChatGettedInfo({required this.chatsInfo});
+}
+
 
 class ChatLoading extends ChatState {}
 

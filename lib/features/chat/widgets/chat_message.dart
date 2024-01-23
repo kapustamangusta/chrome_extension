@@ -22,6 +22,9 @@ class ChatMessage extends StatelessWidget {
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: Colors.black26,
+        ),
       ),
       child: Text(
         message,

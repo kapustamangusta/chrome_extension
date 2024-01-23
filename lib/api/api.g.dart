@@ -45,11 +45,51 @@ class _ApiClient implements ApiClient {
   }
 
   @override
-  Future<String> getAnswer(String question) async {
+  Future<void> createChat(
+    String uidClient,
+    String chatNumber,
+    Map<String, dynamic> data,
+  ) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'question': question};
+    final queryParameters = <String, dynamic>{
+      r'uidClient': uidClient,
+      r'chatNumber': chatNumber,
+    };
     final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
+    final _data = <String, dynamic>{};
+    _data.addAll(data);
+    await _dio.fetch<void>(_setStreamType<void>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/chad-gpt/create-chat',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        ))));
+  }
+
+  @override
+  Future<String> sendMessage(
+    String uidClient,
+    String chatNumber,
+    Map<String, dynamic> data,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'uidClient': uidClient,
+      r'chatNumber': chatNumber,
+    };
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(data);
     final _result = await _dio.fetch<String>(_setStreamType<String>(Options(
       method: 'POST',
       headers: _headers,
@@ -57,7 +97,7 @@ class _ApiClient implements ApiClient {
     )
         .compose(
           _dio.options,
-          '/send-message',
+          '/chad-gpt/send-message-in-chat',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -68,6 +108,64 @@ class _ApiClient implements ApiClient {
         ))));
     final value = _result.data!;
     return value;
+  }
+
+  @override
+  Future<List<ChatInfo>> getAllMessagesFromChats(String uidClient) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'uidClient': uidClient};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<String>(_setStreamType<String>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/chad-gpt/get-all-messages-from-chat',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        ))));
+    List<ChatInfo> value = (jsonDecode(_result.data!) as List).map((dynamic i) {
+      return ChatInfo.fromJson(i as Map<String, dynamic>);
+    }).toList();
+    return value;
+  }
+
+  @override
+  Future<void> deleteChat(
+    String uidClient,
+    String chatNumber,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'uidClient': uidClient,
+      r'chatNumber': chatNumber,
+    };
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    await _dio.fetch<void>(_setStreamType<void>(Options(
+      method: 'DELETE',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/chad-gpt/delete-chat',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        ))));
   }
 
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {

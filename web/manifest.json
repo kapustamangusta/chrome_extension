@@ -3,7 +3,7 @@
   "description": "A new Flutter project.",
   "version": "1.0.0",
   
-  "permissions": ["activeTab","sidePanel", "contextMenus","activeTab", "storage", "tabs"
+  "permissions": ["activeTab","sidePanel", "contextMenus","activeTab", "storage", "tabs","scripting"
   ],
  
   "side_panel": {
