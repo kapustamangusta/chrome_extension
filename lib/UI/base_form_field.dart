@@ -82,15 +82,15 @@ class _BaseFormFieldState extends State<BaseFormField> {
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20),
-            borderSide: const BorderSide(
-              color: Colors.red,
+            borderSide:  BorderSide(
+              color: theme.primaryColor,
               width: 2,
             ),
           ),
           focusedErrorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20),
-            borderSide: const BorderSide(
-              color: Colors.red,
+            borderSide:  BorderSide(
+              color: theme.primaryColor,
               width: 2,
             ),
           ),

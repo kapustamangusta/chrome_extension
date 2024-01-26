@@ -13,7 +13,8 @@ class ChatsDropdownButton extends StatefulWidget {
     required this.items,
     required this.onSelected,
     required this.onCreateChat,
-    this.selectedValue, this.onDeleteChat,
+    this.selectedValue,
+    this.onDeleteChat,
   });
 
   @override
@@ -40,7 +41,6 @@ class _ChatsDropdownButtonState extends State<ChatsDropdownButton> {
         buttonStyleData: ButtonStyleData(
           height: 50,
           width: 300,
-          
           padding: const EdgeInsets.only(left: 14, right: 14),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),
@@ -58,7 +58,7 @@ class _ChatsDropdownButtonState extends State<ChatsDropdownButton> {
             borderRadius: BorderRadius.circular(14),
             color: Colors.redAccent,
           ),
-          //offset: const Offset(-20, 0),
+          offset: const Offset(30, 0),
           scrollbarTheme: ScrollbarThemeData(
             radius: const Radius.circular(40),
             thickness: MaterialStateProperty.all(6),
@@ -121,7 +121,7 @@ class _ChatsDropdownButtonState extends State<ChatsDropdownButton> {
                         IconButton(
                           mouseCursor: SystemMouseCursors.click,
                           onPressed: () {
-                            if(widget.onDeleteChat != null){
+                            if (widget.onDeleteChat != null) {
                               widget.onDeleteChat!(item);
                             }
                           },

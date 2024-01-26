@@ -27,23 +27,29 @@ class Chat extends StatelessWidget {
               shrinkWrap: true,
               itemCount: chat.length,
               itemBuilder: (context, index) {
-                return Align(
-                  alignment: chat[index].role=="user"
-                      ? Alignment.centerRight
-                      : Alignment.centerLeft,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ChatMessage(
-                        message: chat[index].content!,
-                        backgroundColor: index % 2 != 0
-                            ? Colors.lightBlue
-                            : Colors.lightGreen,
-                        colorText: theme.primaryTextTheme.displayMedium!.color!,
-                      ),
-                    ],
-                  ),
-                );
+                if (index == 0) {
+                  return const SizedBox();
+                } else {
+                  return Align(
+                    alignment: chat[index].role == "user"
+                        ? Alignment.centerRight
+                        : Alignment.centerLeft,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ChatMessage(
+                          message: chat[index].content!,
+                          
+                          backgroundColor: index % 2 == 0
+                              ? Colors.grey[300]!
+                              : theme.primaryColor,
+                          colorText:
+                              index % 2 == 0 ? theme.primaryColor : Colors.white,
+                        ),
+                      ],
+                    ),
+                  );
+                }
               },
             ),
           ],

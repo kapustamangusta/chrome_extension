@@ -13,6 +13,7 @@ class ChatMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context);
     return Container(
       constraints: const BoxConstraints(
         maxWidth: 300,
@@ -23,7 +24,7 @@ class ChatMessage extends StatelessWidget {
         color: backgroundColor,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: Colors.black26,
+          color: theme.primaryColor,
         ),
       ),
       child: Text(

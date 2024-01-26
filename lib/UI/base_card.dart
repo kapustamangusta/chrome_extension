@@ -5,28 +5,25 @@ class BaseCard extends StatelessWidget {
   final double? width;
   final Widget? child;
   final EdgeInsets? padding;
-  const BaseCard({super.key, this.height, this.width, this.child, this.padding});
+  final BorderRadius? borderRadius;
+  final Color? color;
+  const BaseCard(
+      {super.key,
+      this.borderRadius,
+      this.height,
+      this.width,
+      this.child,
+      this.padding, this.color});
 
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     return Container(
       padding: padding,
-      
       decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: theme.primaryColor,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: theme.primaryColor,
-            blurRadius: 5,
-            blurStyle: BlurStyle.outer,
-          )
-        ],
-      ),
+          color: color ?? Colors.grey[200],
+          borderRadius: borderRadius ?? BorderRadius.circular(16),
+          border: null),
       width: width,
       height: height,
       child: child,
