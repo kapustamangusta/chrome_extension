@@ -23,7 +23,8 @@ class BaseFormField extends StatefulWidget {
       this.onChanged,
       this.icon,
       this.confirmButton,
-      this.suffixIcon, this.onFieldSubmitted});
+      this.suffixIcon,
+      this.onFieldSubmitted});
 
   @override
   State<BaseFormField> createState() => _BaseFormFieldState();
@@ -41,6 +42,7 @@ class _BaseFormFieldState extends State<BaseFormField> {
       controller: widget.controller,
       obscureText: isHiding,
       maxLength: widget.maxLenght,
+      style: TextStyle(color: theme.textTheme.displayMedium!.color),
       decoration: InputDecoration(
           labelText: widget.labelText,
           labelStyle: TextStyle(color: Colors.grey[600]),
@@ -64,7 +66,7 @@ class _BaseFormFieldState extends State<BaseFormField> {
             ],
           ),
           iconColor: theme.primaryColor,
-          fillColor: Colors.grey.shade50,
+          fillColor: theme.colorScheme.background,
           filled: true,
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20),
@@ -82,14 +84,14 @@ class _BaseFormFieldState extends State<BaseFormField> {
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20),
-            borderSide:  BorderSide(
+            borderSide: BorderSide(
               color: theme.primaryColor,
               width: 2,
             ),
           ),
           focusedErrorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20),
-            borderSide:  BorderSide(
+            borderSide: BorderSide(
               color: theme.primaryColor,
               width: 2,
             ),

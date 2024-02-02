@@ -31,6 +31,9 @@ abstract class ApiClient {
   @POST('/chad-gpt/send-message-in-chat')
   Future<String> sendMessage(@Query("uidClient") String uidClient,@Query("chatNumber") String chatNumber, @Body() Map<String, dynamic> data);
 
+   @GET('/chad-gpt/get-messages-from-chat')
+  Future<List<Messages>> getMessagesFromChat(@Query("uidClient") String uidClient,@Query("chatNumber") String chatNumber);
+
   @GET('/chad-gpt/get-all-messages-from-chat')
   Future<List<ChatInfo>> getAllMessagesFromChats(@Query("uidClient") String uidClient);
 

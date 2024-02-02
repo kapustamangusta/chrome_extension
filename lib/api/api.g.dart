@@ -111,6 +111,42 @@ class _ApiClient implements ApiClient {
   }
 
   @override
+  Future<List<Messages>> getMessagesFromChat(
+    String uidClient,
+    String chatNumber,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'uidClient': uidClient,
+      r'chatNumber': chatNumber,
+    };
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result =
+        await _dio.fetch<String>(_setStreamType<List<Messages>>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/chad-gpt/get-messages-from-chat',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    var value = (jsonDecode(_result.data!) as List)
+        .map((dynamic i) => Messages.fromJson(i as Map<String, dynamic>))
+        .toList();
+    return value;
+  }
+
+
+  @override
   Future<List<ChatInfo>> getAllMessagesFromChats(String uidClient) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'uidClient': uidClient};

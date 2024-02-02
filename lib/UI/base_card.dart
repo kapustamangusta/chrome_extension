@@ -19,6 +19,7 @@ class BaseCard extends StatelessWidget {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     return Container(
+      
       padding: padding,
       decoration: BoxDecoration(
           color: color ?? Colors.grey[200],

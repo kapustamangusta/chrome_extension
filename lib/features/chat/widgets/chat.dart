@@ -13,46 +13,58 @@ class Chat extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    return Container(
-      padding: const EdgeInsets.all(8).copyWith(bottom: 0),
-      child: SingleChildScrollView(
-        reverse: true,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Row(),
-            ListView.builder(
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              itemCount: chat.length,
-              itemBuilder: (context, index) {
-                if (index == 0) {
-                  return const SizedBox();
-                } else {
-                  return Align(
-                    alignment: chat[index].role == "user"
-                        ? Alignment.centerRight
-                        : Alignment.centerLeft,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        ChatMessage(
-                          message: chat[index].content!,
-                          
-                          backgroundColor: index % 2 == 0
-                              ? Colors.grey[300]!
-                              : theme.primaryColor,
-                          colorText:
-                              index % 2 == 0 ? theme.primaryColor : Colors.white,
-                        ),
-                      ],
-                    ),
-                  );
-                }
-              },
-            ),
-          ],
+    return ClipRect(
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        
+        margin: const EdgeInsets.all(8),
+        child: SingleChildScrollView(
+          reverse: true,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Row(),
+              ListView.builder(
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                itemCount: chat.length,
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    return const SizedBox();
+                  } else {
+                    return Align(
+                      alignment: chat[index].role == "user"
+                          ? Alignment.centerRight
+                          : Alignment.centerLeft,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          chat[index].role == "user" ?
+                          ChatUserMessage(
+                            message: chat[index].content!,
+                            backgroundColor: 
+                                theme.primaryColor,
+                            colorText:
+                                Colors.white,
+                          ) :
+                          ChatBotMessage(
+                            message: chat[index].content!,
+                            backgroundColor: 
+                                theme.colorScheme.secondary,
+                            colorText:
+                                theme.textTheme.displayMedium!.color!,
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

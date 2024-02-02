@@ -24,15 +24,28 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 // });
 
 
+var res = "1";
+chrome.storage.sync.get("darkMode", function (result) {
+  if (chrome.runtime.lastError) {
+    reject(chrome.runtime.lastError.message);
+  } else {
+    res = result["darkMode"];
+  }
+});
 
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+  console.log(message);
+  function foo(result, sendResponse) {
+    sendResponse(result);
+  }
+
 
   if (message.action === 'openSidePanel') {
     if (sender.tab && sender.tab.id) {
       try {
         await chrome.sidePanel.open({ tabId: sender.tab.id });
         console.log('Side panel opened successfully');
-        await chrome.tabs.sendMessage(sender.tab.id, {success: true});
+        await chrome.tabs.sendMessage(sender.tab.id, { success: true });
       } catch (error) {
         console.error('Error opening side panel:', error);
         await chrome.tabs.sendMessage(sender.tab.id, { success: false, errorMessage: error.message });
@@ -43,6 +56,38 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
       sendResponse({ success: false });
       return false;
     }
+  } else if (message.type === 'left') {
+    chrome.tabs.query({ active: !0, currentWindow: !0 }, function (tabs) {
+      chrome.tabs.sendMessage(tabs[0].id, { "type": "notifications", "data": message });
+    });
+  } else if (message.type === 'right') {
+    chrome.tabs.query({ active: !0, currentWindow: !0 }, function (tabs) {
+      chrome.tabs.sendMessage(tabs[0].id, { "type": "notifications", "data": message });
+    });
+  } else if (message.type === 'darkMode') {
+    chrome.storage.sync.set({ "darkMode": message.data }, function () { });
+    chrome.storage.sync.get("darkMode", function (result) {
+      if (chrome.runtime.lastError) {
+        reject(chrome.runtime.lastError.message);
+      } else {
+        res = result["darkMode"];
+      }
+    });
+    chrome.tabs.query({ active: !0, currentWindow: !0 }, function (tabs) {
+      chrome.tabs.sendMessage(tabs[0].id, { "type": "darkMode", "data": message.data });
+    });
+
+  } else if (message.type === 'darkModeGet') {
+    //chrome.storage.sync.get("darkMode", foo(sendResponse));
+    sendResponse(res);
+    return true;
   }
 
 });
+
+
+
+function alertMessage(text) {
+  alert(text)
+}
+

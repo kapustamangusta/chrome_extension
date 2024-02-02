@@ -15,7 +15,13 @@ class LoadChatsInfo extends ChatEvent {
   const LoadChatsInfo({required this.uidClient});
 }
 
-class ChangeChat extends ChatEvent {}
+
+class ChangeChat extends ChatEvent {
+  final String uidClient;
+  final String idChat;
+
+  const ChangeChat({required this.uidClient, required this.idChat});
+}
 
 class CreateChat extends ChatEvent {
   final String uidClient;

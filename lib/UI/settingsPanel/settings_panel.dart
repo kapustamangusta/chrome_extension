@@ -1,27 +1,38 @@
+
 import 'package:extension_chrome/UI/ui.dart';
+import 'package:extension_chrome/features/chat/chat.dart';
 import 'package:extension_chrome/features/chat/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
+
 class SettingsPanel extends StatefulWidget {
-  const SettingsPanel({super.key});
+  final Function(int page) onChanged;
+  bool reverce =false;
+   SettingsPanel({super.key, required this.onChanged, required this.reverce});
 
   @override
   State<SettingsPanel> createState() => _SettingsPanelState();
 }
 
 class _SettingsPanelState extends State<SettingsPanel> {
-  int currentMainButton = 1;
+ 
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  int currentPage = 0;
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     return BaseCard(
-      color: Colors.grey[350],
+      color: theme.colorScheme.secondary,
       width: 60,
       padding: const EdgeInsets.only(bottom: 16, top: 16),
       borderRadius: BorderRadius.zero,
       child: Column(
         children: [
-          currentMainButton == 1
+          currentPage == 0
               ? const CurrentMainSettingsButton(
                   icon: Icons.chat,
                   tooltip: "Чат",
@@ -29,19 +40,20 @@ class _SettingsPanelState extends State<SettingsPanel> {
               : IconButton(
                   onPressed: () {
                     setState(() {
-                      currentMainButton = 1;
+                      currentPage = 0;
                     });
+                    widget.onChanged(0);
                   },
                   tooltip: "Чат",
                   icon: Icon(
                     Icons.chat,
-                    color: Colors.grey[600],
+                    color: theme.colorScheme.onSecondary,
                   ),
                 ),
           const SizedBox(
-            height: 16,
+            height: 20,
           ),
-          currentMainButton == 2
+          currentPage == 1
               ? const CurrentMainSettingsButton(
                   icon: Icons.book,
                   tooltip: "Читать",
@@ -49,19 +61,20 @@ class _SettingsPanelState extends State<SettingsPanel> {
               : IconButton(
                   onPressed: () {
                     setState(() {
-                      currentMainButton = 2;
+                      currentPage = 1;
                     });
+                    widget.onChanged(1);
                   },
                   tooltip: "Читать",
                   icon: Icon(
                     Icons.book,
-                    color: Colors.grey[600],
+                    color: theme.colorScheme.onSecondary,
                   ),
                 ),
           const SizedBox(
-            height: 16,
+            height: 20,
           ),
-          currentMainButton == 3
+          currentPage == 2
               ? const CurrentMainSettingsButton(
                   icon: Icons.search,
                   tooltip: "Поиск",
@@ -69,19 +82,20 @@ class _SettingsPanelState extends State<SettingsPanel> {
               : IconButton(
                   onPressed: () {
                     setState(() {
-                      currentMainButton = 3;
+                      currentPage = 2;
                     });
+                    widget.onChanged(2);
                   },
                   tooltip: "Поиск",
                   icon: Icon(
                     Icons.search,
-                    color: Colors.grey[600],
+                    color: theme.colorScheme.onSecondary,
                   ),
                 ),
           const SizedBox(
-            height: 16,
+            height: 20,
           ),
-          currentMainButton == 4
+          currentPage == 3
               ? const CurrentMainSettingsButton(
                   icon: Icons.more_horiz_rounded,
                   tooltip: "More",
@@ -89,20 +103,21 @@ class _SettingsPanelState extends State<SettingsPanel> {
               : IconButton(
                   onPressed: () {
                     setState(() {
-                      currentMainButton = 4;
+                      currentPage = 3;
                     });
+                    widget.onChanged(3);
                   },
                   tooltip: "More",
                   icon: Icon(
                     Icons.more_horiz_rounded,
-                    color: Colors.grey[600],
+                    color: theme.colorScheme.onSecondary,
                   ),
                 ),
           const SizedBox(
             height: 8,
           ),
           Divider(
-            color: Colors.grey[700],
+            color: theme.colorScheme.onSecondary,
           ),
           const SizedBox(
             height: 8,
@@ -112,13 +127,24 @@ class _SettingsPanelState extends State<SettingsPanel> {
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                IconButton(
-                  onPressed: () {},
-                  icon: Icon(
-                    Icons.settings,
-                    color: Colors.grey[600],
-                  ),
-                ),
+                currentPage == 4
+                    ? const CurrentMainSettingsButton(
+                        tooltip: "Настройки",
+                        icon: Icons.settings,
+                      )
+                    : IconButton(
+                        onPressed: () {
+                          setState(() {
+                            currentPage = 4;
+                          });
+                          widget.onChanged(4);
+                        },
+                        tooltip: "Настройки",
+                        icon: Icon(
+                          Icons.settings,
+                          color: theme.colorScheme.onSecondary,
+                        ),
+                      ),
                 const SizedBox(
                   height: 16,
                 ),
@@ -126,7 +152,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                   onPressed: () {},
                   icon: Icon(
                     Icons.person,
-                    color: Colors.grey[600],
+                    color: theme.colorScheme.onSecondary,
                   ),
                 )
               ],

@@ -23,15 +23,23 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       _onChatGenerate,
       transformer: restartable(),
     );
+
     on<ChangeChat>(
-      (event, emit) {
-        add(const LoadChatsInfo(uidClient: "1"));
-        emit(ChatInitial());
+      (event, emit) async {
+        try {
+          if (event.idChat != "" && event.idChat!=null) {
+            var chatInfo = await apiClient.getMessagesFromChat(
+                event.uidClient, event.idChat);
+            emit(ChatGettedInfo(messages: chatInfo));
+          }
+          emit(ChatInitial());
+        } catch (e) {
+          emit(ChatFailure(error: e));
+        }
       },
     );
     on<DeleteChat>(
       _onDeleteChat,
-      
     );
   }
 
@@ -52,7 +60,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       emit(ChatLoading());
       final chatsInfo =
           await apiClient.getAllMessagesFromChats(event.uidClient);
-      emit(ChatGettedInfo(chatsInfo: chatsInfo));
+      emit(ChatsGettedInfo(chatsInfo: chatsInfo));
       emit(ChatInitial());
     } catch (e) {
       emit(ChatFailure(error: e));
@@ -97,7 +105,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   Future<void> _onChatGenerate(
       ChatGenearate event, Emitter<ChatState> emit) async {
-    
     for (int i = 0; i <= event.text.length; i++) {
       await Future.delayed(const Duration(milliseconds: 25));
       emit(ChatLoaded(answer: event.text.substring(0, i)));

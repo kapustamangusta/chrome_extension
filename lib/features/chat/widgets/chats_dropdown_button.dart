@@ -26,6 +26,7 @@ class _ChatsDropdownButtonState extends State<ChatsDropdownButton> {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context);
     selectedValue = widget.selectedValue;
     return DropdownButtonHideUnderline(
       child: DropdownButton2<ChatInfo>(
@@ -33,7 +34,7 @@ class _ChatsDropdownButtonState extends State<ChatsDropdownButton> {
         hint: const Text(
           'Чаты',
           style: TextStyle(
-            fontSize: 14,
+            fontSize: 16,
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -47,7 +48,7 @@ class _ChatsDropdownButtonState extends State<ChatsDropdownButton> {
             border: Border.all(
               color: Colors.black26,
             ),
-            color: Colors.redAccent,
+            color: theme.primaryColor,
           ),
           elevation: 2,
         ),
@@ -56,7 +57,7 @@ class _ChatsDropdownButtonState extends State<ChatsDropdownButton> {
           width: 250,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),
-            color: Colors.redAccent,
+            color: theme.primaryColor,
           ),
           offset: const Offset(30, 0),
           scrollbarTheme: ScrollbarThemeData(
@@ -77,7 +78,7 @@ class _ChatsDropdownButtonState extends State<ChatsDropdownButton> {
                 const Text(
                   "Добавить чат",
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
@@ -111,7 +112,7 @@ class _ChatsDropdownButtonState extends State<ChatsDropdownButton> {
                           child: Text(
                             item.chatNumber!,
                             style: const TextStyle(
-                              fontSize: 14,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                             ),

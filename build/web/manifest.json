@@ -25,9 +25,38 @@
       "matches": [
         "<all_urls>"
       ]
+    },
+    {
+      "js": ["main.dart.js"],
+      "matches": [
+        "<all_urls>"
+      ]
     }
   ],
-  
+  "options_page": "options.html",
+  "web_accessible_resources": [
+    {
+      "resources": [ "assets/FontManifest.json" ],
+      "matches": [ "<all_urls>" ]
+    },
+    {
+      "resources": [ "assets/.env" ],
+      "matches": [ "<all_urls>" ]
+    },
+    {
+      "resources": [ "assets/assets/fonts/MaterialIcons-Regular.otf" ],
+      "matches": [ "<all_urls>" ]
+    },
+    {
+      "resources": [ "assets/fonts/MaterialIcons-Regular.otf" ],
+      "matches": [ "<all_urls>" ]
+    },
+    {
+      "resources": [ "assets/packages/cupertino_icons/assets/CupertinoIcons.ttf" ],
+      "matches": [ "<all_urls>" ]
+    }
+  ],
+
   "icons": {
     "16": "favicon.png",
     "48": "favicon.png",

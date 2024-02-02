@@ -5,11 +5,11 @@ class ChatMessage extends StatelessWidget {
     super.key,
     this.colorText = Colors.black,
     this.backgroundColor = Colors.white,
-    required this.message,
+    this.child,
   });
   final Color colorText;
   final Color backgroundColor;
-  final String message;
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {
@@ -27,12 +27,7 @@ class ChatMessage extends StatelessWidget {
           color: theme.primaryColor,
         ),
       ),
-      child: Text(
-        message,
-        style: TextStyle(
-          color: colorText,
-        ),
-      ),
+      child: child
     );
   }
 }

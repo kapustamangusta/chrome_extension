@@ -11,10 +11,16 @@ class ChatInitial extends ChatState {
   
 }
 
-class ChatGettedInfo extends ChatState {
+class ChatsGettedInfo extends ChatState {
   final List<ChatInfo> chatsInfo;
 
-  ChatGettedInfo({required this.chatsInfo});
+  ChatsGettedInfo({required this.chatsInfo});
+}
+
+class ChatGettedInfo extends ChatState {
+  final List<Messages> messages;
+
+  ChatGettedInfo({required this.messages});
 }
 
 

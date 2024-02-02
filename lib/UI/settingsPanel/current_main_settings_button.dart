@@ -13,7 +13,7 @@ class CurrentMainSettingsButton extends StatelessWidget {
       alignment: Alignment.centerLeft,
       child: Container(
         decoration: BoxDecoration(
-            color: Colors.grey[200],
+            color: theme.colorScheme.background,
             borderRadius: const BorderRadius.only(
               topRight: Radius.circular(16),
               bottomRight: Radius.circular(16),
