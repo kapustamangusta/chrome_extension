@@ -33,6 +33,15 @@ chrome.storage.sync.get("darkMode", function (result) {
   }
 });
 
+var side = "right";
+chrome.storage.sync.get("side", function (result) {
+  if (chrome.runtime.lastError) {
+    reject(chrome.runtime.lastError.message);
+  } else {
+    side = result["side"];
+  }
+});
+
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   console.log(message);
   function foo(result, sendResponse) {
@@ -57,13 +66,20 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
       return false;
     }
   } else if (message.type === 'left') {
+    side = 'left';
+    chrome.storage.sync.set({ "side": message.type }, function () { });
     chrome.tabs.query({ active: !0, currentWindow: !0 }, function (tabs) {
       chrome.tabs.sendMessage(tabs[0].id, { "type": "notifications", "data": message });
     });
   } else if (message.type === 'right') {
+    side = 'right';
+    chrome.storage.sync.set({ "side": message.type }, function () { });
     chrome.tabs.query({ active: !0, currentWindow: !0 }, function (tabs) {
       chrome.tabs.sendMessage(tabs[0].id, { "type": "notifications", "data": message });
     });
+  } else if (message.type == 'sideGet') {
+    sendResponse(side);
+    return true;
   } else if (message.type === 'darkMode') {
     chrome.storage.sync.set({ "darkMode": message.data }, function () { });
     chrome.storage.sync.get("darkMode", function (result) {

@@ -52,6 +52,7 @@ dependencies:
   sweet_cookie: ^0.0.5
   flutter_js: ^0.8.0
   ffi: ^2.1.0
+  hexcolor: ^3.0.1
   
 
 dev_dependencies:

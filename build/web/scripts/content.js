@@ -1,5 +1,14 @@
 var openPanel = false;
 var side = "right";
+
+chrome.storage.sync.get("side", function (result) {
+    if (chrome.runtime.lastError) {
+        reject(chrome.runtime.lastError.message);
+    } else {
+        side = result['side'];
+    }
+});
+
 function init() {
     // var flutter = document.getElementsByTagName("flutter-view")[0];
     // console.log(flutter);
@@ -9,7 +18,6 @@ function init() {
     button.style.position = 'fixed';
     button.style.zIndex = "99999"
     button.style.top = '65%';
-    button.style.right = "-75px";
     button.style.backgroundColor = 'white';
     button.style.color = "red";
     button.style.boxShadow = "0px 8px 15px rgba(0, 0, 0, 0.1)";
@@ -17,7 +25,6 @@ function init() {
     button.style.cursor = 'pointer';
     button.style.fontSize = "16px";
     button.style.padding = "8px 20px"
-    button.style.borderRadius = "20px 0 0 20px";
     button.style.transition = "transform 0.3s ease-in-out"
 
     chrome.storage.sync.get("darkMode", function (result) {
@@ -132,6 +139,7 @@ const config = { attributes: false, childList: true, subtree: true };
 
 // Функция обратного вызова, которая будет выполнена при изменении
 const callback = function (mutationsList, observer) {
+    
     for (let mutation of mutationsList) {
         if (mutation.type === 'childList') {
             mutation.addedNodes.forEach(node => {
@@ -143,14 +151,23 @@ const callback = function (mutationsList, observer) {
                         targetNode.style.position = "relative";
                         node.style.width = "500px";
                         node.style.position = "fixed";
-                        node.style.inset = "0 0 0 auto";
-
-                        node.style.right = "-500px"
-
+                        
                         node.style.overflow = "hidden";
                         node.style.zIndex = "999999";
                         node.style.transition = "transform 0.5s ease-in-out";
-
+                        if(side=="right"){
+                            setRightPanelHiddenStyle(node);
+                            var button = document.getElementById("open-button");
+                            setRightButtonStyle(button);
+                            button.style.transform = 'translateX(0px)';
+                        }else if(side=="left"){
+                            node.style.inset = "0 auto 0 0";
+                            node.style.left = "500px";
+                            node.style.transform = "translateX(-1000px)";
+                            var button = document.getElementById("open-button");
+                            setLeftButtonStyle(button);
+                            button.style.transform = "translateX(0px)";
+                        }
 
                     }
                 }
@@ -166,6 +183,11 @@ const observer = new MutationObserver(callback);
 observer.observe(targetNode, config);
 
 console.log(chrome.runtime.getURL("assets/FontManifest.json"));
+
+function setRightPanelHiddenStyle(node) {
+    node.style.inset = "0 0 0 auto";
+    node.style.right = "-500px";
+}
 
 function rightMoveOnOpenedPanel(button, flutter) {
     button.style.transform = 'translateX(0px)';

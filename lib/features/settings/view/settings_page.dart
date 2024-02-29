@@ -1,10 +1,12 @@
 import 'package:extension_chrome/UI/ui.dart';
 import 'package:extension_chrome/services/chrome_api.dart';
 import 'package:flutter/material.dart';
+import 'package:js/js.dart';
 import 'package:provider/provider.dart';
 
 class SettingsPage extends StatefulWidget {
-  const SettingsPage({super.key});
+  final Function(String side) onChangedSide;
+  const SettingsPage({super.key, required this.onChangedSide});
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();
@@ -15,6 +17,11 @@ class _SettingsPageState extends State<SettingsPage> {
   final String _dm = "";
   @override
   void initState() {
+    getSetting(ParameterSendMessage(type: "sideGet"), allowInterop((response) {
+      setState(() {
+        _side = response;
+      });
+    }));
     super.initState();
   }
 
@@ -32,7 +39,7 @@ class _SettingsPageState extends State<SettingsPage> {
               Text(
                 "Темная тема:",
                 style: TextStyle(
-                    color: theme.textTheme.displayMedium!.color, fontSize: 18),
+                    color: theme.textTheme.displayMedium!.color, fontSize: 24),
               ),
               const SizedBox(
                 width: 8,
@@ -57,11 +64,15 @@ class _SettingsPageState extends State<SettingsPage> {
             child: Text(
               "Боковая панель: ",
               style: TextStyle(
-                  fontSize: 24, color: theme.textTheme.displayMedium!.color),
+                  fontSize: 32, color: theme.textTheme.displayMedium!.color),
             ),
           ),
           ListTile(
-            title: const Text('Справа'),
+            title: Text(
+              'Справа',
+              style: TextStyle(
+                  fontSize: 24, color: theme.textTheme.displayMedium!.color),
+            ),
             leading: Radio<String>(
               value: 'right',
               groupValue: _side,
@@ -69,17 +80,23 @@ class _SettingsPageState extends State<SettingsPage> {
                 setState(() {
                   _side = value!;
                 });
-                sendMessage(ParameterSendMessage(type: "right", data: ""));
+                widget.onChangedSide(value!);
+                setSetting(ParameterSendMessage(type: "right", data: ""));
               },
             ),
           ),
           ListTile(
-            title: const Text('Слева'),
+            title: Text(
+              'Слева',
+              style: TextStyle(
+                  fontSize: 24, color: theme.textTheme.displayMedium!.color),
+            ),
             leading: Radio<String>(
               value: 'left',
               groupValue: _side,
               onChanged: (String? value) {
-                sendMessage(ParameterSendMessage(type: "left", data: ""));
+                setSetting(ParameterSendMessage(type: "left", data: ""));
+                widget.onChangedSide(value!);
                 setState(() {
                   _side = value!;
                 });

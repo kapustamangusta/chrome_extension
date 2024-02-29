@@ -31,12 +31,12 @@ class _ChatsDropdownButtonState extends State<ChatsDropdownButton> {
     return DropdownButtonHideUnderline(
       child: DropdownButton2<ChatInfo>(
         isExpanded: true,
-        hint: const Text(
+        hint: Text(
           'Чаты',
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: theme.textTheme.displayMedium!.color!,
           ),
         ),
         buttonStyleData: ButtonStyleData(
@@ -75,12 +75,12 @@ class _ChatsDropdownButtonState extends State<ChatsDropdownButton> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   "Добавить чат",
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: theme.textTheme.displayMedium!.color!,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -96,7 +96,7 @@ class _ChatsDropdownButtonState extends State<ChatsDropdownButton> {
                   },
                   icon: const Icon(Icons.add),
                   hoverColor: Colors.black,
-                  color: Colors.white,
+                  color: theme.textTheme.displayMedium!.color!,
                 ),
               ],
             ),
@@ -111,10 +111,10 @@ class _ChatsDropdownButtonState extends State<ChatsDropdownButton> {
                           width: 170,
                           child: Text(
                             item.chatNumber!,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color: theme.textTheme.displayMedium!.color!,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -128,7 +128,7 @@ class _ChatsDropdownButtonState extends State<ChatsDropdownButton> {
                           },
                           icon: const Icon(Icons.delete),
                           tooltip: "Удалить чат",
-                          color: Colors.white,
+                          color: theme.textTheme.displayMedium!.color!,
                         ),
                       ],
                     ),
